@@ -3,6 +3,13 @@ package com.augusttechgroup.mountain
 
 
 /**
+ A1 B1
+ C1 D1
+
+ A1  AB2 B1
+ AC2 AC2 BD2
+ C1  CD2 D1
+
  X X X X X
  X X X X X
  X X X X X
@@ -19,19 +26,24 @@ package com.augusttechgroup.mountain
 class Mountain {
 
   Random random
-  Node northWest
+  Point northWest
   Closure scaleFunction
   
   Mountain() {
     random = new Random()
     random.setSeed(new Date().time)
     
-    def rootDisplacer = this.&gaussian.curry(1)
-    
-    northWest = new Node(displace: rootDisplacer)
-    def northEast = new Node(displace: rootDisplacer)
-    def southEast = new Node(displace: rootDisplacer)
-    def southWest = new Node(displace: rootDisplacer)
+    def displacer = this.&gaussian
+    def range = buildInitialRange(displacer, 1)
+    northWest = range[0][0]
+  }
+
+
+  def buildInitialRange(displacer = null, scale = 1) {
+    def northWest = new Point(displace: displacer, scale: scale)
+    def northEast = new Point(displace: displacer, scale: scale)
+    def southEast = new Point(displace: displacer, scale: scale)
+    def southWest = new Point(displace: displacer, scale: scale)
     
     northWest.east = northEast
     northWest.south = southWest
@@ -43,39 +55,48 @@ class Mountain {
     southEast.west = southWest
     
     southWest.north = northWest
-    southWest.easy = southEast
+    southWest.east = southEast
+    
+    return [[northWest, northEast], [southWest, southEast]]
   }
   
   
   def addMidpoints() {
-    def node = northWest
+    def point = northWest
 
   }
   
-  def insertBetweenWestAndEast(node, displacer) {
-    if(node && node.east) {
-      def newNode = new Node()
-      newNode.displacer = displacer
-      newNode.north = node.north
-      newNode.south = node.south
-      newNode.west = node
-      newNode.east = node.east
-      node.east = node
-      node.east.west = node
+  def insertBetweenEastAndWest(point, displacer = null) {
+    if(point && point.east) {
+      def west = point
+      def east = point.east
+      def middle = new Point()
+
+      middle.displace = displacer
+      middle.west = west
+      middle.east = east
+
+      west.east = middle
+      east.west = middle
+
+      return [west, middle, east]
+    }
+    else {
+      return null
     }
   }
   
   
-  def insertBetweenNorthAndSouth(node, displacer) {
-    if(node && node.south) {
-      def newNode = new Node()
-      newNode.displacer = displacer
-      newNode.north = node.north
-      newNode.south = node.south
-      newNode.west = node
-      newNode.east = node.east
-      node.east = node
-      node.east.west = node
+  def insertBetweenNorthAndSouth(point, displacer) {
+    if(point && point.south) {
+      def middle = new Point()
+      middle.displacer = displacer
+      middle.north = point
+      middle.south = point.south
+      middle.west = point.west
+      middle.east = point.east
+      point.east = point
+      point.east.west = point
     }
   }
   
