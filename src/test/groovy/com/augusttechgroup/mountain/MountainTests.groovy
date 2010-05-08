@@ -56,8 +56,7 @@ class MountainTests {
     assertNotNull westernPoint.east
     assertNull westernPoint.east.east
     
-    westernPoint = mountain.doInsertionsOnEastWestRow(northWest, 2, { 1 })
-    assertNotNull westernPoint
+    mountain.doInsertionsOnEastWestRow(northWest, 2, { 1 })
     assertNotNull westernPoint.east
     assertNotNull westernPoint.east.east
     assertEquals 2, westernPoint.east.scale
@@ -76,6 +75,9 @@ class MountainTests {
     assertEquals southRow, northRow.south
     
     mountain.insertNewNorthSouthRow(northRow, 2, { 1 })
+    
+    northRow.eachSouth { point -> println point }
+    northRow.east.eachSouth { point -> println point }
     
     assertFalse northRow.south == southRow
     assertFalse southRow.north == northRow

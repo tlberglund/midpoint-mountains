@@ -79,11 +79,5 @@ class Point {
     eachSouth { point -> list << closure.call(point) }
     return list
   }
-  
-  
-  String toString() {
-    elevation?.toString()
-  }
-  
 }
 

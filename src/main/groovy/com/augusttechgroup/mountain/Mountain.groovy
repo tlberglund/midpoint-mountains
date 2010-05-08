@@ -53,7 +53,10 @@ class Mountain {
   }
   
   def iterate(northWest) {
-    
+    def scale = 1
+    def displacer = {
+      random.nextGaussian() / Math.pow(2, scale)
+    }
   }
 
 
@@ -79,28 +82,17 @@ class Mountain {
   }  
   
   def doInsertionsOnEastWestRow(westernPoint, scale, displacer = null) {
-    def point = westernPoint
-    while(point) {
-      def nextPoint = point.east
-      point.insertEast(scale, displacer)
-      point = nextPoint
+    westernPoint.eachEast { point ->
+      if(point.east) point.insertEast(scale, displacer)
     }
-    
-    return westernPoint
   }
   
   def insertNewNorthSouthRow(westernPoint, scale, displacer = null) {
-    def point = westernPoint
-    while(point) {
-      def nextPoint = point.east
-      point.insertSouth(scale, displacer)
-      point = nextPoint
+    westernPoint.eachEast { point ->
+      if(point.south) point.insertSouth(scale, displacer)
     }
-    
-    return westernPoint
   }
-  
-  
+    
   
   double gaussian(double scale) {
     random.nextGaussian() / scale
