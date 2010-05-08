@@ -89,7 +89,6 @@ class MountainTests {
     assertNotNull southEast
     assertFalse northEast.south == southEast
     assertFalse southEast.north == northEast
-    
   }
   
   

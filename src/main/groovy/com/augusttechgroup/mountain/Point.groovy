@@ -32,7 +32,6 @@ class Point {
     }
   }
   
-  
   def insertEast(scale, displacer = null) {
     if(east) {
       def west = this
@@ -51,7 +50,40 @@ class Point {
     }
   }
   
+  def eachEast(Closure closure) {
+    def point = this
+    while(point) {
+      def nextPoint = point.east
+      closure.call(point)
+      point = nextPoint
+    }
+  }
   
+  def eachSouth(Closure closure) {
+    def point = this
+    while(point) {
+      def nextPoint = point.south
+      closure.call(point)
+      point = nextPoint
+    }
+  }
+  
+  def collectEast(Closure closure) {
+    def list = []
+    eachEast { point -> list << closure.call(point) }
+    return list
+  }
+  
+  def collectSouth(Closure closure) {
+    def list = []
+    eachSouth { point -> list << closure.call(point) }
+    return list
+  }
+  
+  
+  String toString() {
+    elevation?.toString()
+  }
   
 }
 

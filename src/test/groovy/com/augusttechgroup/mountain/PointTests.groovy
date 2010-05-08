@@ -37,7 +37,6 @@ class PointTests {
     southWest.east = southEast
   }
   
-  
   @Test
   void singleEastInsertion() {    
     def middle = northWest.insertEast(2, { 2 })
@@ -66,6 +65,66 @@ class PointTests {
     assertEquals 2, middle.scale
     assertEquals middle, north.south
     assertEquals middle, south.north
+  }
+  
+  @Test
+  void testEachEast() {
+    def p3 = new Point()
+    def p2 = new Point(east: p3)
+    def p1 = new Point(east: p2)
+    def points = [p1, p2, p3]
+    
+    def count = 0
+    p1.eachEast { point ->
+      assertEquals point, points[count]
+      count++ 
+    }
+    
+    assertEquals 3, count
+  }
+
+  @Test
+  void testEachSouth() {
+    def p3 = new Point()
+    def p2 = new Point(south: p3)
+    def p1 = new Point(south: p2)
+    def points = [p1, p2, p3]
+    
+    def count = 0
+    p1.eachSouth { point -> 
+      assertEquals point, points[count]
+      count++ 
+    }
+    
+    assertEquals 3, count
+  }
+  
+  @Test
+  void testCollectEast() {
+    def p3 = new Point()
+    def p2 = new Point(east: p3)
+    def p1 = new Point(east: p2)
+    
+    def list = p1.collectEast { point -> point }
+    assertNotNull list
+    assertEquals 3, list.size()
+    assertEquals p1, list[0]
+    assertEquals p2, list[1]
+    assertEquals p3, list[2]
+  }
+  
+  @Test
+  void testCollectSouth() {
+    def p3 = new Point()
+    def p2 = new Point(south: p3)
+    def p1 = new Point(south: p2)
+    
+    def list = p1.collectSouth { point -> point }
+    assertNotNull list
+    assertEquals 3, list.size()
+    assertEquals p1, list[0]
+    assertEquals p2, list[1]
+    assertEquals p3, list[2]
   }
   
 }

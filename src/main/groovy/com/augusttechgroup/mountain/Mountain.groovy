@@ -46,9 +46,14 @@ class Mountain {
     random = new Random()
     random.setSeed(new Date().time)
     
-    def displacer = this.&gaussian
-    def range = buildInitialRange(displacer, 1)
+    def scale = 1
+    def displacer = this.&gaussian.curry(scale)
+    def range = buildInitialRange(displacer, scale)
     northWest = range[0][0]
+  }
+  
+  def iterate(northWest) {
+    
   }
 
 
