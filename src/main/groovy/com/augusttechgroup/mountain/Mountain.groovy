@@ -7,14 +7,27 @@ package com.augusttechgroup.mountain
  C1 D1
 
  A1  AB2 B1
- AC2 AC2 BD2
+ AC2 BC3 BD2
  C1  CD2 D1
 
- X X X X X
- X X X X X
- X X X X X
- X X X X X
- X X X X X
+ A1   AAB3  AB2 ABB3  B1
+ AAC3 AABACBC5 ABCD3
+ AC2  ACBC3 BC3 BCBD3 BD2
+ C1   CCD3  CD2  CDD3 D1
+
+ X X
+ X X
+ 
+ X Y X
+ Y Y Y
+ X Y X
+
+ X Y X Y X
+ Y Y Y Y Y
+ X Y X Y X
+ Y Y Y Y Y
+ X Y X Y X
+ 
  
         north
  west         east
@@ -58,48 +71,29 @@ class Mountain {
     southWest.east = southEast
     
     return [[northWest, northEast], [southWest, southEast]]
-  }
+  }  
   
-  
-  def addMidpoints() {
-    def point = northWest
-
-  }
-  
-  def insertBetweenEastAndWest(point, displacer = null) {
-    if(point && point.east) {
-      def west = point
-      def east = point.east
-      def middle = new Point()
-
-      middle.displace = displacer
-      middle.west = west
-      middle.east = east
-
-      west.east = middle
-      east.west = middle
-
-      return [west, middle, east]
+  def doInsertionsOnEastWestRow(westernPoint, scale, displacer = null) {
+    def point = westernPoint
+    while(point) {
+      def nextPoint = point.east
+      point.insertEast(scale, displacer)
+      point = nextPoint
     }
-    else {
-      return null
-    }
+    
+    return westernPoint
   }
   
-  
-  def insertBetweenNorthAndSouth(point, displacer) {
-    if(point && point.south) {
-      def middle = new Point()
-      middle.displacer = displacer
-      middle.north = point
-      middle.south = point.south
-      middle.west = point.west
-      middle.east = point.east
-      point.east = point
-      point.east.west = point
+  def insertNewNorthSouthRow(westernPoint, scale, displacer = null) {
+    def point = westernPoint
+    while(point) {
+      def nextPoint = point.east
+      point.insertSouth(scale, displacer)
+      point = nextPoint
     }
+    
+    return westernPoint
   }
-  
   
   
   

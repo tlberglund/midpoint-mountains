@@ -6,7 +6,7 @@ import org.junit.Before
 import static org.junit.Assert.*
 
 
-class MountainPointInsertionTests {
+class MountainTests {
 
   def mountain
   Point northWest
@@ -50,25 +50,47 @@ class MountainPointInsertionTests {
   }
 
   @Test
-  void testEastWestInsertion() {
-    def nodes = mountain.insertBetweenEastAndWest(northWest, {})
+  void eastWestRowInsertion() {
+    def westernPoint = northWest
+    assertNotNull westernPoint
+    assertNotNull westernPoint.east
+    assertNull westernPoint.east.east
     
-    def west = nodes[0]
-    def middle = nodes[1]
-    def east = nodes[2]
-    
-    println west
-    println middle
-    println east
-    
-    assertNotNull west
-    assertNotNull middle
-    assertNotNull east
-
-    assertEquals middle, west.east
-    assertEquals middle, east.west
-    assertEquals west, middle.west
-    assertEquals east, middle.east
+    westernPoint = mountain.doInsertionsOnEastWestRow(northWest, 2, { 1 })
+    assertNotNull westernPoint
+    assertNotNull westernPoint.east
+    assertNotNull westernPoint.east.east
+    assertEquals 2, westernPoint.east.scale
+    assertEquals westernPoint, westernPoint.east.west
+    assertEquals westernPoint.east, westernPoint.east.east.west
   }
+  
+  @Test
+  void northSouthRowInsertion() {
+    def northRow = northWest
+    def southRow = southWest
+    
+    assertNotNull northRow
+    assertNotNull southRow
+    assertEquals northRow, southRow.north
+    assertEquals southRow, northRow.south
+    
+    mountain.insertNewNorthSouthRow(northRow, 2, { 1 })
+    
+    assertFalse northRow.south == southRow
+    assertFalse southRow.north == northRow
+    assertEquals southRow, northRow.south.south
+    assertEquals northRow, southRow.north.north
+    
+    def northEast = northRow.east
+    def southEast = southRow.east
+    
+    assertNotNull northEast
+    assertNotNull southEast
+    assertFalse northEast.south == southEast
+    assertFalse southEast.north == northEast
+    
+  }
+  
   
 }
