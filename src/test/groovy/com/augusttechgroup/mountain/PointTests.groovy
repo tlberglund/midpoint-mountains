@@ -68,6 +68,54 @@ class PointTests {
   }
   
   @Test
+  void testEastIterator() {
+    def p3 = new Point()
+    def p2 = new Point(east: p3)
+    def p1 = new Point(east: p2)
+    def points = [p1, p2, p3]
+    def iteratedPoints = []
+    def index = 0
+    
+    println p1
+    println p2
+    println p3
+    
+    def iter = p1.eastIterator()
+    while(iter.hasNext()) {
+      def point = iter.next()
+      assertNotNull point
+      iteratedPoints << point
+    }
+    
+    assertEquals points.size(), iteratedPoints.size()
+    assertEquals points[0], iteratedPoints[0]
+    assertEquals points[1], iteratedPoints[1]
+    assertEquals points[2], iteratedPoints[2]
+  }
+  
+  @Test
+  void testSouthIterator() {
+    def p3 = new Point()
+    def p2 = new Point(south: p3)
+    def p1 = new Point(south: p2)
+    def points = [p1, p2, p3]
+    def iteratedPoints = []
+    def index = 0
+    
+    def iter = p1.southIterator()
+    while(iter.hasNext()) {
+      def point = iter.next()
+      assertNotNull point
+      iteratedPoints << point
+    }
+    
+    assertEquals points.size(), iteratedPoints.size()
+    assertEquals points[0], iteratedPoints[0]
+    assertEquals points[1], iteratedPoints[1]
+    assertEquals points[2], iteratedPoints[2]
+  }
+  
+  @Test
   void testEachEast() {
     def p3 = new Point()
     def p2 = new Point(east: p3)

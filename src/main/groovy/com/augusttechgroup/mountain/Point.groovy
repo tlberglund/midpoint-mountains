@@ -50,21 +50,25 @@ class Point {
     }
   }
   
+  Iterator<Point> eastIterator() {
+    new PointEastIterator(this)
+  }
+    
+  Iterator<Point> southIterator() {
+    new PointSouthIterator(this)
+  }
+  
   def eachEast(Closure closure) {
-    def point = this
-    while(point) {
-      def nextPoint = point.east
-      closure.call(point)
-      point = nextPoint
-    }
+    each(eastIterator(), closure)
   }
   
   def eachSouth(Closure closure) {
-    def point = this
-    while(point) {
-      def nextPoint = point.south
-      closure.call(point)
-      point = nextPoint
+    each(southIterator(), closure)
+  }
+  
+  def each(Iterator iter, Closure closure) {
+    while(iter.hasNext()) {
+      closure.call(iter.next())
     }
   }
   

@@ -41,24 +41,22 @@ class Mountain {
   Random random
   Point northWest
   Closure scaleFunction
+  int scale
   
   Mountain() {
     random = new Random()
     random.setSeed(new Date().time)
     
-    def scale = 1
+    scale = 1
+    scaleFunction = { -> scale
+      random.nextGaussian() / Math.pow(2, scale)
+    }
+    
     def displacer = this.&gaussian.curry(scale)
     def range = buildInitialRange(displacer, scale)
     northWest = range[0][0]
   }
   
-  def iterate(northWest) {
-    def scale = 1
-    def displacer = {
-      random.nextGaussian() / Math.pow(2, scale)
-    }
-  }
-
 
   def buildInitialRange(displacer = null, scale = 1) {
     def northWest = new Point(displace: displacer, scale: scale)
@@ -79,24 +77,68 @@ class Mountain {
     southWest.east = southEast
     
     return [[northWest, northEast], [southWest, southEast]]
-  }  
+  }
   
+  def iterate() {
+    scale++
+    
+    northWest.eachSouth { point -> 
+      doInsertionsOnEastWestRow(point, scale, scaleFunction.curry(scale))
+    }
+    
+    northWest.eachSouth { point ->
+/*      println "INSERTING NEW ROW FOR WEST ${point}"*/
+      insertNewNorthSouthRow(point, scale, scaleFunction.curry(scale))
+    }
+  }
+
+  def export() {
+    def list = northWest.collectSouth { nsPoint ->
+      nsPoint.collectEast { ewPoint -> ewPoint.elevation }
+    }
+    
+    list.each { row ->
+      println row.join(',')
+    }
+  }
+
   def doInsertionsOnEastWestRow(westernPoint, scale, displacer = null) {
     westernPoint.eachEast { point ->
       if(point.east) point.insertEast(scale, displacer)
+    }
+    
+    //
+    // Fix up north/south links in the newly inserted rows. Sadly, this just can't
+    // be done in Point
+    //
+  }
+  
+  def maintainNorthSouthLinks(westernPoint) {
+    print "NORTH="
+    westernPoint.north?.eachEast { println it }
+    print "MIDDLE="
+    westernPoint.eachEast { println it }
+    print "SOUTH="
+    westernPoint.south.eachEast { println it }
+    def northIterator = westernPoint.north?.eastIterator()
+    def middleIterator = westernPoint.eastIterator()
+    def southIterator = westernPoint.south?.eastIterator()
+    while(middleIterator.hasNext()) {
+      def northPoint = northIterator?.next()
+      def middlePoint = middleIterator.next()
+      def southPoint = southIterator?.next()
+      middlePoint.north = northPoint
+      middlePoint.south = southPoint
+      if(northPoint) northPoint.south = middlePoint
+      if(southPoint) southPoint.north = middlePoint
     }
   }
   
   def insertNewNorthSouthRow(westernPoint, scale, displacer = null) {
     westernPoint.eachEast { point ->
+/*      println "${point}->${point.south}"*/
       if(point.south) point.insertSouth(scale, displacer)
     }
-  }
-    
-  
-  double gaussian(double scale) {
-    random.nextGaussian() / scale
-  }
-      
+  }      
 }
 

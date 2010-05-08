@@ -57,11 +57,28 @@ class MountainTests {
     assertNull westernPoint.east.east
     
     mountain.doInsertionsOnEastWestRow(northWest, 2, { 1 })
-    assertNotNull westernPoint.east
-    assertNotNull westernPoint.east.east
-    assertEquals 2, westernPoint.east.scale
-    assertEquals westernPoint, westernPoint.east.west
-    assertEquals westernPoint.east, westernPoint.east.east.west
+    def middlePoint = westernPoint.east
+    assertNotNull middlePoint
+    def easternPoint = middlePoint.east
+    assertNotNull easternPoint
+
+    assertEquals 2, middlePoint.scale
+    assertEquals westernPoint, middlePoint.west
+    assertEquals middlePoint, easternPoint.west
+    
+    assertEquals southWest, northWest.south
+    assertEquals southEast, northEast.south
+
+    def bottomMiddle = southWest.east
+    assertNotNull bottomMiddle
+    
+    def topMiddle = northWest.east
+    assertNotNull topMiddle
+    
+    def middle = middlePoint.east
+    assertNotNull middle
+    assertEquals topMiddle, middle.north
+    assertEquals bottomMiddle, middle.south
   }
   
   @Test
@@ -74,23 +91,36 @@ class MountainTests {
     assertEquals northRow, southRow.north
     assertEquals southRow, northRow.south
     
+    mountain.doInsertionsOnEastWestRow(northWest, 2, { 1 })
+    mountain.doInsertionsOnEastWestRow(northWest.south, 2, { 1 })
     mountain.insertNewNorthSouthRow(northRow, 2, { 1 })
     
-    northRow.eachSouth { point -> println point }
-    northRow.east.eachSouth { point -> println point }
+    println "TOP"
+    northWest.eachEast { println it }
+    println "MIDDLE"
+    northWest.south.eachEast { println it }
+    println "BOTTOM"
+    northWest.south.south.eachEast { println it }
     
-    assertFalse northRow.south == southRow
-    assertFalse southRow.north == northRow
-    assertEquals southRow, northRow.south.south
-    assertEquals northRow, southRow.north.north
+    def middleRow = northRow.south
+    assertNotNull middleRow
+    assertEquals middleRow, northRow.south
+    assertEquals middleRow, southRow.north
+    assertEquals northRow, middleRow.north
+    assertEquals southRow, middleRow.south
     
-    def northEast = northRow.east
-    def southEast = southRow.east
+    def northEast = northRow.east.east
+    def southEast = southRow.east.east
+    def middleEast = middleRow.east?.east
     
     assertNotNull northEast
     assertNotNull southEast
-    assertFalse northEast.south == southEast
-    assertFalse southEast.north == northEast
+    assertNotNull middleRow
+    assertNotNull middleEast
+    assertEquals middleEast, northEast.south
+    assertEquals middleEast, southEast.north
+    assertEquals middleRow, northWest.south
+    assertEquals middleRow, southWest.north
   }
   
   

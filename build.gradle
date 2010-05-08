@@ -20,7 +20,7 @@ task compile << {
 }
 
 task run << {
-  Script app = new GroovyShell().parse(new File("src/main/groovy/com/augusttechgroup/demo/Script.groovy"))
+  Script app = new GroovyShell(this.class.classLoader).parse(new File("src/main/groovy/BuildMountain.groovy"))
   // or replace .parse() w/ a .evalulate()?
   app.run()
 }
