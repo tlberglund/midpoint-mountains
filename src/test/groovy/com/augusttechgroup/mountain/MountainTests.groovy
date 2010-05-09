@@ -3,6 +3,7 @@ package com.augusttechgroup.mountain
 
 import org.junit.Test
 import org.junit.Before
+import org.junit.Ignore
 import static org.junit.Assert.*
 
 
@@ -49,6 +50,7 @@ class MountainTests {
     assertEquals southWest, southEast.west
   }
 
+  @Ignore
   @Test
   void eastWestRowInsertion() {
     def westernPoint = northWest
@@ -81,6 +83,7 @@ class MountainTests {
     assertEquals bottomMiddle, middle.south
   }
   
+  @Ignore
   @Test
   void northSouthRowInsertion() {
     def northRow = northWest
@@ -121,6 +124,79 @@ class MountainTests {
     assertEquals middleEast, southEast.north
     assertEquals middleRow, northWest.south
     assertEquals middleRow, southWest.north
+  }
+  
+  @Test void testNorthSouthLinkMaintenance() {
+    def nw = new Point()
+    def nm = new Point()
+    def ne = new Point()
+    def mw = new Point()
+    def mm = new Point()
+    def me = new Point()
+    def sw = new Point()
+    def sm = new Point()
+    def se = new Point()
+    nw.east = nm
+    nm.west = nw
+    nm.east = ne
+    ne.west = nm
+    nw.south = mw
+    mw.east = mm
+    mm.west = mw
+    mm.east = me
+    me.west = mm
+    mw.north = nw
+    mw.south = sw
+    sw.east = sm
+    sm.west = sw
+    sm.east = se
+    se.west = sm
+    sw.north = mw
+    
+    println "nw=${nw}"
+    println "nm=${nm}"
+    println "ne=${ne}"
+    println "mw=${mw}"
+    println "mm=${mm}"
+    println "me=${me}"
+    println "sw=${sw}"
+    println "sm=${sm}"
+    println "se=${se}"
+    
+    mountain.maintainNorthSouthLinks(nw)
+    mountain.maintainNorthSouthLinks(mw)
+    mountain.maintainNorthSouthLinks(sw)
+    assertEquals sw, mw.south
+    assertEquals nm, nw.east
+    assertEquals nw, nm.west
+    assertEquals ne, nm.east
+    assertEquals nm, ne.west
+    assertEquals mm, mw.east
+    assertEquals mw, mm.west
+    assertEquals me, mm.east
+    assertEquals mm, me.west
+    assertEquals sm, sw.east
+    assertEquals sw, sm.west
+    assertEquals se, sm.east
+    assertEquals sm, se.west
+    assertEquals mw, nw.south
+    assertEquals mm, nm.south
+    assertEquals me, ne.south
+    assertEquals sw, mw.south
+    assertEquals sm, mm.south
+    assertEquals se, me.south
+    assertNull sw.south
+    assertNull sm.south
+    assertNull se.south
+    assertEquals mw, sw.north
+    assertEquals mm, sm.north
+    assertEquals me, se.north
+    assertEquals nw, mw.north
+    assertEquals nm, mm.north
+    assertEquals ne, me.north
+    assertNull nw.north
+    assertNull nm.north
+    assertNull ne.north
   }
   
   

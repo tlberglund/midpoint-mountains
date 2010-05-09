@@ -106,23 +106,20 @@ class Mountain {
     westernPoint.eachEast { point ->
       if(point.east) point.insertEast(scale, displacer)
     }
-    
-    //
-    // Fix up north/south links in the newly inserted rows. Sadly, this just can't
-    // be done in Point
-    //
   }
   
+  //
+  // Fix up north/south links in the newly inserted rows. Sadly, this just can't
+  // be done in Point
+  //
   def maintainNorthSouthLinks(westernPoint) {
-    print "NORTH="
-    westernPoint.north?.eachEast { println it }
-    print "MIDDLE="
-    westernPoint.eachEast { println it }
-    print "SOUTH="
-    westernPoint.south.eachEast { println it }
     def northIterator = westernPoint.north?.eastIterator()
     def middleIterator = westernPoint.eastIterator()
     def southIterator = westernPoint.south?.eastIterator()
+    
+    println "NORTH=${westernPoint.north}"
+    println "MIDDLE=${westernPoint}"
+    println "SOUTH=${westernPoint.south}"
     while(middleIterator.hasNext()) {
       def northPoint = northIterator?.next()
       def middlePoint = middleIterator.next()
