@@ -153,19 +153,20 @@ class MountainTests {
     se.west = sm
     sw.north = mw
     
-    println "nw=${nw}"
-    println "nm=${nm}"
-    println "ne=${ne}"
-    println "mw=${mw}"
-    println "mm=${mm}"
-    println "me=${me}"
-    println "sw=${sw}"
-    println "sm=${sm}"
-    println "se=${se}"
+//    println "nw=${nw}"
+//    println "nm=${nm}"
+//    println "ne=${ne}"
+//    println "mw=${mw}"
+//    println "mm=${mm}"
+//    println "me=${me}"
+//    println "sw=${sw}"
+//    println "sm=${sm}"
+//    println "se=${se}"
     
     mountain.maintainNorthSouthLinks(nw)
     mountain.maintainNorthSouthLinks(mw)
     mountain.maintainNorthSouthLinks(sw)
+
     assertEquals sw, mw.south
     assertEquals nm, nw.east
     assertEquals nw, nm.west
