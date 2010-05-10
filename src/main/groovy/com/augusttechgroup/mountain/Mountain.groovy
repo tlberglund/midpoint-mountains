@@ -43,6 +43,7 @@ class Mountain {
   Closure scaleFunction
   int scale
   
+  
   Mountain() {
     random = new Random()
     random.setSeed(new Date().time)
@@ -76,19 +77,18 @@ class Mountain {
     southWest.north = northWest
     southWest.east = southEast
     
+//    northWest.displace()
+//    northEast.displace()
+//    southWest.displace()
+//    southEast.displace()
+    
     return [[northWest, northEast], [southWest, southEast]]
   }
   
   
-  def iterate() {
+  def grow() {
     scale++
 
-    northWest.eachSouth { westernPoint -> 
-      westernPoint.eachEast { point -> 
-        point.displace() 
-      }
-    }
-    
     northWest.eachSouth { point -> 
       doInsertionsOnEastWestRow(point, scale, scaleFunction.curry(scale))
     }
@@ -100,8 +100,8 @@ class Mountain {
       }
     }
   }
-
-
+  
+  
   def export() {
     def list = northWest.collectSouth { nsPoint ->
       nsPoint.collectEast { ewPoint -> ewPoint.elevation }
@@ -115,32 +115,14 @@ class Mountain {
 
   def doInsertionsOnEastWestRow(westernPoint, scale, displacer = null) {
     westernPoint.eachEast { point ->
-      if(point.east) point.insertEast(scale, displacer)
+      if(point.east) {
+        def newPoint = point.insertEast(scale, displacer)
+        newPoint.displace((point.elevation + newPoint.east.elevation) / 2)
+      }
     }
   }
   
-  //
-  // Fix up north/south links in the newly inserted rows. Sadly, this just can't
-  // be done in Point, since point can't know the state of its northern and 
-  // southern neighbor rows, and such state may not be established when the
-  // Point insert methods are called.
-  //
-  def maintainNorthSouthLinks(westernPoint) {
-    def northIterator = westernPoint.north?.eastIterator()
-    def middleIterator = westernPoint.eastIterator()
-    def southIterator = westernPoint.south?.eastIterator()
-    
-    while(middleIterator.hasNext()) {
-      def northPoint = northIterator?.next()
-      def middlePoint = middleIterator.next()
-      def southPoint = southIterator?.next()
-      middlePoint.north = northPoint
-      middlePoint.south = southPoint
-      if(northPoint) northPoint.south = middlePoint
-      if(southPoint) southPoint.north = middlePoint
-    }
-  }
-    
+
   def insertBetweenRows(northRow, southRow, scale, displacer = null) {
     def northIterator = northRow.eastIterator()
     def southIterator = southRow.eastIterator()
@@ -161,6 +143,8 @@ class Mountain {
       
       northPoint.south = middlePoint
       southPoint.north = middlePoint
+      
+      middlePoint.displace((northPoint.elevation + southPoint.elevation) / 2)
       
       lastMiddlePoint = middlePoint
       if(!firstMiddlePoint) firstMiddlePoint = middlePoint

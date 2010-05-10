@@ -182,6 +182,8 @@ class PointTests {
     assertEquals 0, point.elevation, 0.00000001
     point.displace()
     assertEquals 1, point.elevation, 0.00000001
+    point.displace(0.5)
+    assertEquals 1.5, point.elevation, 0.00000001
 
     point = new Point(displacer: { -0.32 })
     assertEquals 0, point.elevation, 0.00000001

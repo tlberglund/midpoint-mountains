@@ -84,8 +84,8 @@ class Point {
     return list
   }
   
-  def displace() {
-    elevation = displacer()
+  def displace(initial = 0.0) {
+    elevation = initial + displacer()
   }
 }
 
