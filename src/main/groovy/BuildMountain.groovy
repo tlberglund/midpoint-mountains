@@ -13,3 +13,7 @@ m.export()
 println "NEXT"
 m.iterate()
 m.export()
+
+println "NEXT"
+m.iterate()
+m.export()

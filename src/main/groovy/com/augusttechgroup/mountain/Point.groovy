@@ -8,7 +8,7 @@ class Point {
   Point south
   Point west
   
-  Closure displace
+  Closure displacer
   
   double elevation
   int scale
@@ -18,7 +18,7 @@ class Point {
     if(south) {
       def north = this
       def south = south
-      def middle = new Point(displace: displacer, scale: scale)
+      def middle = new Point(displacer: displacer, scale: scale)
 
       middle.north = north
       middle.south = south
@@ -36,7 +36,7 @@ class Point {
     if(east) {
       def west = this
       def east = east
-      def middle = new Point(displace: displacer, scale: scale)
+      def middle = new Point(displacer: displacer, scale: scale)
 
       middle.west = west
       middle.east = east
@@ -82,6 +82,10 @@ class Point {
     def list = []
     eachSouth { point -> list << closure.call(point) }
     return list
+  }
+  
+  def displace() {
+    elevation = displacer()
   }
 }
 

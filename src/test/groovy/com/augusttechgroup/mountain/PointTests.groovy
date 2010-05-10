@@ -19,10 +19,10 @@ class PointTests {
     def displacer = { 1 }
     def scale = 1
     
-    northWest = new Point(displace: displacer, scale: scale)
-    northEast = new Point(displace: displacer, scale: scale)
-    southEast = new Point(displace: displacer, scale: scale)
-    southWest = new Point(displace: displacer, scale: scale)
+    northWest = new Point(displacer: displacer, scale: scale)
+    northEast = new Point(displacer: displacer, scale: scale)
+    southEast = new Point(displacer: displacer, scale: scale)
+    southWest = new Point(displacer: displacer, scale: scale)
     
     northWest.east = northEast
     northWest.south = southWest
@@ -173,6 +173,26 @@ class PointTests {
     assertEquals p1, list[0]
     assertEquals p2, list[1]
     assertEquals p3, list[2]
+  }
+  
+  
+  @Test
+  void testDisplace() {
+    def point = new Point(displacer: {1})
+    assertEquals 0, point.elevation, 0.00000001
+    point.displace()
+    assertEquals 1, point.elevation, 0.00000001
+
+    point = new Point(displacer: { -0.32 })
+    assertEquals 0, point.elevation, 0.00000001
+    point.displace()
+    assertEquals(-0.32, point.elevation, 0.00000001)
+    
+    point = new Point(elevation: 100, displacer: { point.elevation / 2 })
+    assertEquals 100, point.elevation, 0.00000001
+    point.displace()
+    assertEquals 50, point.elevation, 0.00000001
+
   }
   
 }

@@ -50,7 +50,6 @@ class MountainTests {
     assertEquals southWest, southEast.west
   }
 
-  @Ignore
   @Test
   void eastWestRowInsertion() {
     def westernPoint = northWest
@@ -76,14 +75,8 @@ class MountainTests {
     
     def topMiddle = northWest.east
     assertNotNull topMiddle
-    
-    def middle = middlePoint.east
-    assertNotNull middle
-    assertEquals topMiddle, middle.north
-    assertEquals bottomMiddle, middle.south
   }
   
-  @Ignore
   @Test
   void northSouthRowInsertion() {
     def northRow = northWest
@@ -94,36 +87,43 @@ class MountainTests {
     assertEquals northRow, southRow.north
     assertEquals southRow, northRow.south
     
-    mountain.doInsertionsOnEastWestRow(northWest, 2, { 1 })
-    mountain.doInsertionsOnEastWestRow(northWest.south, 2, { 1 })
-    mountain.insertNewNorthSouthRow(northRow, 2, { 1 })
-    
-    println "TOP"
-    northWest.eachEast { println it }
-    println "MIDDLE"
-    northWest.south.eachEast { println it }
-    println "BOTTOM"
-    northWest.south.south.eachEast { println it }
-    
-    def middleRow = northRow.south
+    mountain.doInsertionsOnEastWestRow(northRow, 2, { 1 })
+    mountain.doInsertionsOnEastWestRow(southRow, 2, { 1 })
+    def middleRow = mountain.insertBetweenRows(northRow, southRow, 2, { 1 })
+        
     assertNotNull middleRow
-    assertEquals middleRow, northRow.south
-    assertEquals middleRow, southRow.north
-    assertEquals northRow, middleRow.north
-    assertEquals southRow, middleRow.south
     
-    def northEast = northRow.east.east
-    def southEast = southRow.east.east
-    def middleEast = middleRow.east?.east
+    def nw = northRow
+    def nm = northRow.east
+    def ne = northRow.east?.east
+    def mw = middleRow
+    def mm = middleRow.east
+    def me = middleRow.east?.east
+    def sw = southRow
+    def sm = southRow.east
+    def se = southRow.east?.east
     
-    assertNotNull northEast
-    assertNotNull southEast
-    assertNotNull middleRow
-    assertNotNull middleEast
-    assertEquals middleEast, northEast.south
-    assertEquals middleEast, southEast.north
-    assertEquals middleRow, northWest.south
-    assertEquals middleRow, southWest.north
+    assertNotNull nw
+    assertNotNull nm
+    assertNotNull ne
+    assertNotNull mw
+    assertNotNull mm
+    assertNotNull me
+    assertNotNull sw
+    assertNotNull sm
+    assertNotNull se
+    assertEquals mw, nw.south
+    assertEquals mw, sw.north
+    assertEquals mm, nm.south
+    assertEquals mm, sm.north
+    assertEquals me, ne.south
+    assertEquals me, se.north
+    assertEquals nw, mw.north
+    assertEquals sw, mw.south
+    assertEquals nm, mm.north
+    assertEquals sm, mm.south
+    assertEquals ne, me.north
+    assertEquals se, me.south
   }
   
   @Test void testNorthSouthLinkMaintenance() {
