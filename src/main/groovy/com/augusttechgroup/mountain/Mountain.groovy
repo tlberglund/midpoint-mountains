@@ -1,40 +1,15 @@
+//
+// Midpoint Displacement Mountain Generator
+// Copyright © 2010 
+// August Technology Group, LLC
+// http://augusttechgroup.com
+//
 
 package com.augusttechgroup.mountain
 
 
 /**
- A1 B1
- C1 D1
-
- A1  AB2 B1
- AC2 BC3 BD2
- C1  CD2 D1
-
- A1   AAB3  AB2 ABB3  B1
- AAC3 AABACBC5 ABCD3
- AC2  ACBC3 BC3 BCBD3 BD2
- C1   CCD3  CD2  CDD3 D1
-
- X X
- X X
- 
- X Y X
- Y Y Y
- X Y X
-
- X Y X Y X
- Y Y Y Y Y
- X Y X Y X
- Y Y Y Y Y
- X Y X Y X
- 
- 
-        north
- west         east
-       south
- 
- elevation
-
+ *
  **/
 class Mountain {
 

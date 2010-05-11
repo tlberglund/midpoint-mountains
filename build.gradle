@@ -1,3 +1,11 @@
+//
+// Midpoint Displacement Mountain Generator
+// Copyright © 2010 
+// August Technology Group, LLC
+// http://augusttechgroup.com
+//
+// Gradle build file
+//
 
 usePlugin 'java'
 usePlugin 'groovy'
@@ -12,7 +20,6 @@ repositories {
 dependencies {
     groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.0'
     testCompile group: 'junit', name: 'junit', version: '4.7'
-//    runtime group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
 }
 
 task compile << {
@@ -21,6 +28,5 @@ task compile << {
 
 task run << {
   Script app = new GroovyShell(this.class.classLoader).parse(new File("src/main/groovy/BuildMountain.groovy"))
-  // or replace .parse() w/ a .evalulate()?
   app.run()
 }
