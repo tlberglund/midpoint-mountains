@@ -19,7 +19,7 @@ class MountainTests {
   @Before
   void buildTestMountain() {
     mountain = new Mountain()
-    def range = mountain.buildInitialRange({ 1 }, 1)
+    def range = mountain.initialize()
     
     (northWest, northEast) = range[0]
     (southWest, southEast) = range[1]
@@ -125,6 +125,74 @@ class MountainTests {
     assertEquals ne, me.north
     assertEquals se, me.south
   }
+
+
+  @Test
+  void arrayConversion() {
+    northWest.elevation = 1
+    northEast.elevation = 2
+    southWest.elevation = 3
+    southEast.elevation = 4
+    def array = mountain.toArray()
+    
+    assertEquals 2, array.size()
+    def northRow = array[0]
+    def southRow = array[1]
+    
+    assertNotNull northRow
+    assertNotNull southRow
+    assertEquals 2, northRow.size()
+    assertEquals 2, southRow.size()
+    
+    assertEquals 1, northRow[0], 0.00000001
+    assertEquals 2, northRow[1], 0.00000001
+    assertEquals 3, southRow[0], 0.00000001
+    assertEquals 4, southRow[1], 0.00000001
+  }
+  
+  @Test
+  void testInterpolation() {
+    def firstMountain = createThreeByThreeMountainWith([[1,2,3],[4,5,6],[7,8,9]])
+    def secondMountain = createThreeByThreeMountainWith([[2,4,6],[8,10,12],[14,16,18]])
+    def elevation = secondMountain.interpolate(firstMountain)
+    
+    assertNotNull elevation
+    
+    assertEquals 1.5,  elevation[0][0], 0.00000001
+    assertEquals 3,    elevation[0][1], 0.00000001
+    assertEquals 4.5,  elevation[0][2], 0.00000001
+    assertEquals 6,    elevation[1][0], 0.00000001
+    assertEquals 7.5,  elevation[1][1], 0.00000001
+    assertEquals 9,    elevation[1][2], 0.00000001
+    assertEquals 10.5, elevation[2][0], 0.00000001
+    assertEquals 12,   elevation[2][1], 0.00000001
+    assertEquals 13.5, elevation[2][2], 0.00000001
+  }
   
   
+  def createThreeByThreeMountainWith(elevations) {
+    def m = new Mountain()
+    m.initialize()
+    def northRow = m.northWest
+    def southRow = northRow.south
+    def middleRow
+    
+    m.doInsertionsOnEastWestRow(northRow, 2, { 1 })
+    m.doInsertionsOnEastWestRow(southRow, 2, { 1 })
+    middleRow = m.insertBetweenRows(northRow, southRow, 2, { 1 })
+    
+    northRow.elevation = elevations[0][0]
+    northRow.east.elevation = elevations[0][1]
+    northRow.east.east.elevation = elevations[0][2]
+    middleRow.elevation = elevations[1][0]
+    middleRow.east.elevation = elevations[1][1]
+    middleRow.east.east.elevation = elevations[1][2]
+    southRow.elevation = elevations[2][0]
+    southRow.east.elevation = elevations[2][1]
+    southRow.east.east.elevation = elevations[2][2]
+    
+    return m
+  }
+
+
 }

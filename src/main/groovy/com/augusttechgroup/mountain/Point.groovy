@@ -72,6 +72,14 @@ class Point {
     each(southIterator(), closure)
   }
   
+  def each(Closure closure) {
+    eachSouth { westernPoint ->
+      westernPoint.eachEast { point ->
+        closure.call(westernPoint, point)
+      }
+    }
+  }
+  
   def each(Iterator iter, Closure closure) {
     while(iter.hasNext()) {
       closure.call(iter.next())

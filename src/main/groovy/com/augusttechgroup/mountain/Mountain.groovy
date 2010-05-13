@@ -27,10 +27,15 @@ class Mountain {
     scaleFunction = { scale ->
       random.nextGaussian() / Math.pow(2, scale)
     }
-    
+  }
+
+
+  def initialize() {
     def displacer = scaleFunction.curry(scale)
     def range = buildInitialRange(displacer, scale)
     northWest = range[0][0]
+    
+    return range
   }
   
 
@@ -51,11 +56,6 @@ class Mountain {
     
     southWest.north = northWest
     southWest.east = southEast
-    
-//    northWest.displace()
-//    northEast.displace()
-//    southWest.displace()
-//    southEast.displace()
     
     return [[northWest, northEast], [southWest, southEast]]
   }
@@ -78,15 +78,37 @@ class Mountain {
   
   
   def export() {
-    def list = northWest.collectSouth { nsPoint ->
-      nsPoint.collectEast { ewPoint -> ewPoint.elevation }
-    }
-    
-    list.each { row ->
+    toListsOfElevation().each { row ->
       println row.join('\t')
     }
   }
 
+
+  def interpolate(def toMountain) {
+    def fromRows = toArray()
+    def toRows = toMountain.toArray()
+    def rows = []
+    fromRows.eachWithIndex { fromRow, fromRowNumber ->
+      def row = []
+      fromRow.eachWithIndex { fromCol, fromColNumber ->
+        row << (fromCol + toRows[fromRowNumber][fromColNumber]) / 2
+      }
+      rows << row
+    }
+    
+    return rows
+  }
+  
+  
+  /**
+   * Converts the elevation graph to a two-dimensional list of elevation values.
+   */
+  def toArray() {
+    northWest.collectSouth { nsPoint ->
+      nsPoint.collectEast { ewPoint -> ewPoint.elevation }
+    }.toArray()
+  }
+  
 
   def doInsertionsOnEastWestRow(westernPoint, scale, displacer = null) {
     westernPoint.eachEast { point ->
