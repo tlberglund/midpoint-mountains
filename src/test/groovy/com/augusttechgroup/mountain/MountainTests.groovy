@@ -150,6 +150,7 @@ class MountainTests {
     assertEquals 4, southRow[1], 0.00000001
   }
   
+  
   @Test
   void testInterpolation() {
     def firstMountain = createThreeByThreeMountainWith([[1,2,3],[4,5,6],[7,8,9]])
@@ -167,6 +168,26 @@ class MountainTests {
     assertEquals 10.5, elevation[2][0], 0.00000001
     assertEquals 12,   elevation[2][1], 0.00000001
     assertEquals 13.5, elevation[2][2], 0.00000001
+  }
+  
+  
+  @Test
+  void testDelta() {
+    def firstMountain = createThreeByThreeMountainWith([[1,2,3],[4,5,6],[7,8,9]])
+    def secondMountain = createThreeByThreeMountainWith([[2,4,6],[8,10,12],[14,16,18]])
+    def delta = firstMountain.delta(secondMountain.toArray())
+    
+    assertNotNull delta
+    
+    assertEquals 1, delta[0][0], 0.00000001
+    assertEquals 2, delta[0][1], 0.00000001
+    assertEquals 3, delta[0][2], 0.00000001
+    assertEquals 4, delta[1][0], 0.00000001
+    assertEquals 5, delta[1][1], 0.00000001
+    assertEquals 6, delta[1][2], 0.00000001
+    assertEquals 7, delta[2][0], 0.00000001
+    assertEquals 8, delta[2][1], 0.00000001
+    assertEquals 9, delta[2][2], 0.00000001
   }
   
   

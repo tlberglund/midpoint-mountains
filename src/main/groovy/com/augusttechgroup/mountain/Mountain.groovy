@@ -77,21 +77,65 @@ class Mountain {
   }
   
   
-  def export() {
-    toListsOfElevation().each { row ->
-      println row.join('\t')
+  def export(pw = System.out) {
+    toArray().each { row -> 
+      pw.println row.join('\t')
     }
   }
 
 
-  def interpolate(def toMountain) {
+  def tweens(toMountain, tweenCount) {
+    def toElevations = toMountain.toArray()
+    def fromElevations = toArray()
+    def deltaElevations = delta(toElevations)
+    def mountains = []
+    tweenCount.times { tween ->
+      def rows = []
+      fromElevations.eachWithIndex { fromRow, fromRowNumber ->
+        def row = []
+        fromRow.eachWithIndex { fromCol, fromColNumber ->
+          row << fromCol + (deltaElevations[fromRowNumber][fromColNumber] * (tween + 1))
+        }
+        rows << row
+      }
+      mountains << rows
+    }
+    
+    return mountains
+  }
+  
+
+  def interpolate(Mountain toMountain) {
+    interpolate(toMountain.toArray())
+  }
+  
+
+  def delta(toMountainArray) {
     def fromRows = toArray()
-    def toRows = toMountain.toArray()
+    def toRows = toMountainArray
     def rows = []
     fromRows.eachWithIndex { fromRow, fromRowNumber ->
       def row = []
       fromRow.eachWithIndex { fromCol, fromColNumber ->
-        row << (fromCol + toRows[fromRowNumber][fromColNumber]) / 2
+        def toCol = toRows[fromRowNumber][fromColNumber]
+        row << toCol - fromCol
+      }
+      rows << row
+    }
+    
+    return rows
+  }
+  
+
+  def interpolate(toMountainArray, step = 2) {
+    def fromRows = toArray()
+    def toRows = toMountainArray
+    def rows = []
+    fromRows.eachWithIndex { fromRow, fromRowNumber ->
+      def row = []
+      fromRow.eachWithIndex { fromCol, fromColNumber ->
+        def toCol = toRows[fromRowNumber][fromColNumber]
+        row << ((toCol - fromCol) / step) + fromCol
       }
       rows << row
     }

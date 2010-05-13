@@ -200,7 +200,6 @@ class PointTests {
     assertEquals 100, point.elevation, 0.00000001
     point.displace()
     assertEquals 50, point.elevation, 0.00000001
-
   }
   
 }
