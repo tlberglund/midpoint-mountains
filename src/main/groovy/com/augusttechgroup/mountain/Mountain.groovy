@@ -57,6 +57,11 @@ class Mountain {
     southWest.north = northWest
     southWest.east = southEast
     
+//    northWest.displace()
+//    northEast.displace()
+//    southEast.displace()
+//    southWest.displace()
+    
     return [[northWest, northEast], [southWest, southEast]]
   }
   
@@ -94,7 +99,7 @@ class Mountain {
       fromElevations.eachWithIndex { fromRow, fromRowNumber ->
         def row = []
         fromRow.eachWithIndex { fromCol, fromColNumber ->
-          row << fromCol + (deltaElevations[fromRowNumber][fromColNumber] * (tween + 1))
+          row << fromCol + (deltaElevations[fromRowNumber][fromColNumber] * ((double)tween / tweenCount))
         }
         rows << row
       }
