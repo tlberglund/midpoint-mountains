@@ -13,31 +13,80 @@ package com.augusttechgroup.mountain
  **/
 class Mountain {
 
+  def rows
   Random random
-  Point northWest
-  Closure scaleFunction
-  int scale
-  
+
   
   Mountain() {
     random = new Random()
     random.setSeed(new Date().time)
-    
-    scale = 1
-    scaleFunction = { scale ->
-      random.nextGaussian() / Math.pow(2, scale)
+    rows = [ [0,0], [0,0] ]
+    rows[0][0] = displacement(nextScale(rows[0]))
+    rows[0][1] = displacement(nextScale(rows[0]))
+    rows[1][0] = displacement(nextScale(rows[1]))
+    rows[1][1] = displacement(nextScale(rows[1]))
+  }
+
+
+  def size() {
+    rows.size()
+  }
+
+
+  def getAt(row) {
+    rows[row]
+  }
+
+
+  def currentScale(row) {
+    row.size() - 1
+  }
+
+
+  def nextScale(row) {
+    currentScale(row) * 2
+  }
+
+
+  def displacement = { scale ->
+    scaleFunction(scale)
+  }
+
+
+  def scaleFunction = { scale ->
+    random.nextGaussian() / (double)scale
+  }
+  
+  
+  /*
+               a a
+              a b a
+            a c b c a
+        a d c d b d c d a
+a e d e c e d e b e d e c e d e a
+  */
+  def displaceRow(row) {
+    def newRow = []
+    for(int n = 0; n < r.size() - 1; n++) {
+      insertNewPoint(row[n..(n+1)])
     }
   }
 
 
-  def initialize() {
-    def displacer = scaleFunction.curry(scale)
-    def range = buildInitialRange(displacer, scale)
-    northWest = range[0][0]
-    
-    return range
+  /**
+   * Takes a pair of points and returns a triple, with a new point added
+   * in the middle displaced from the average of the two according to the
+   * prescribed scale.
+   */
+  def insertNewPoint(pair, scale) {
+    [pair[0], midpointElevation(pair, displacement.curry(scale)), pair[1]]
   }
-  
+
+
+  def midpointElevation = { pair, displacer ->
+    ((pair[0] + pair[1]) / 2) + displacer()
+  }
+
 
   def buildInitialRange(displacer = null, scale = 1) {
     def northWest = new Point(displacer: displacer, scale: scale)
@@ -64,8 +113,8 @@ class Mountain {
     
     return [[northWest, northEast], [southWest, southEast]]
   }
-  
-  
+
+
   def grow() {
     scale++
 
@@ -80,8 +129,8 @@ class Mountain {
       }
     }
   }
-  
-  
+
+
   def export(pw = System.out) {
     toArray().each { row -> 
       pw.println row.join('\t')
@@ -108,12 +157,12 @@ class Mountain {
     
     return mountains
   }
-  
+
 
   def interpolate(Mountain toMountain) {
     interpolate(toMountain.toArray())
   }
-  
+
 
   def delta(toMountainArray) {
     def fromRows = toArray()
@@ -130,7 +179,7 @@ class Mountain {
     
     return rows
   }
-  
+
 
   def interpolate(toMountainArray, step = 2) {
     def fromRows = toArray()
@@ -147,8 +196,8 @@ class Mountain {
     
     return rows
   }
-  
-  
+
+
   /**
    * Converts the elevation graph to a two-dimensional list of elevation values.
    */
@@ -157,7 +206,7 @@ class Mountain {
       nsPoint.collectEast { ewPoint -> ewPoint.elevation }
     }.toArray()
   }
-  
+
 
   def doInsertionsOnEastWestRow(westernPoint, scale, displacer = null) {
     westernPoint.eachEast { point ->
@@ -167,7 +216,7 @@ class Mountain {
       }
     }
   }
-  
+
 
   def insertBetweenRows(northRow, southRow, scale, displacer = null) {
     def northIterator = northRow.eastIterator()

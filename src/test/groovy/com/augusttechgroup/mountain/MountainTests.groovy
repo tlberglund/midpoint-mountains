@@ -10,46 +10,89 @@ import static org.junit.Assert.*
 class MountainTests {
 
   def mountain
-  Point northWest
-  Point northEast
-  Point southEast
-  Point southWest
 
 
   @Before
   void buildTestMountain() {
     mountain = new Mountain()
-    def range = mountain.initialize()
-    
-    (northWest, northEast) = range[0]
-    (southWest, southEast) = range[1]
   }
 
 
   @Test
-  void testInitialMountain() {
-    assertEquals 1, northWest.scale
-    assertEquals 1, northEast.scale
-    assertEquals 1, southEast.scale
-    assertEquals 1, southWest.scale
-    assertEquals null, northWest.west
-    assertEquals null, northWest.north
-    assertEquals northEast, northWest.east
-    assertEquals southWest, northWest.south
-    assertEquals null, southWest.west
-    assertEquals null, southWest.south
-    assertEquals northWest, southWest.north
-    assertEquals southEast, southWest.east
-    assertEquals null, northEast.north
-    assertEquals null, northEast.east
-    assertEquals northWest, northEast.west
-    assertEquals southEast, northEast.south
-    assertEquals null, southEast.east
-    assertEquals null, southEast.south
-    assertEquals northEast, southEast.north
-    assertEquals southWest, southEast.west
+  void mountainIsInitializedProperly() {
+    assertEquals 2, mountain.size()
+    assertEquals 2, mountain[0].size()
+    assertEquals 2, mountain[1].size()
   }
 
+
+  @Test
+  void currentScaleIsDerivedFromRowSize() {
+    assertEquals 1, mountain.currentScale(new int[2])
+    assertEquals 2, mountain.currentScale(new int[3])
+    assertEquals 4, mountain.currentScale(new int[5])
+    assertEquals 8, mountain.currentScale(new int[9])
+    assertEquals 16, mountain.currentScale(new int[17])
+    assertEquals 32, mountain.currentScale(new int[33])
+  }
+
+
+  @Test
+  void nextScaleIsDerivedFromRowSize() {
+    assertEquals 2, mountain.nextScale(new int[2])
+    assertEquals 4, mountain.nextScale(new int[3])
+    assertEquals 8, mountain.nextScale(new int[5])
+    assertEquals 16, mountain.nextScale(new int[9])
+    assertEquals 32, mountain.nextScale(new int[17])
+    assertEquals 64, mountain.nextScale(new int[33])
+  }
+
+
+  @Test
+  void randomNumbersScaleByRowSize() {
+    mountain.scaleFunction = { scale -> (int)(64 / scale) }
+    assertEquals 32, mountain.displacement(2)
+    assertEquals 16, mountain.displacement(4)
+    assertEquals 8, mountain.displacement(8)
+    assertEquals 4, mountain.displacement(16)
+    assertEquals 2, mountain.displacement(32)
+    assertEquals 1, mountain.displacement(64)
+  }
+
+
+  @Test
+  void midPointElevationAveragesAndAddsDisplacement() {
+    def pair = [ 1, 2 ]
+    assertEquals 1.75, mountain.midpointElevation(pair, { 0.25 }), 0.0000001
+    assertEquals 1.25, mountain.midpointElevation(pair, { -0.25 })
+  }
+
+
+  @Test
+  void tripleIsGeneratedFromPairWithDisplacement() {
+    def pair = [ 1, 4 ]
+
+    mountain.scaleFunction = { scale -> 1 / scale }
+    def triple = mountain.insertNewPoint(pair, mountain.nextScale(pair))
+    assertEquals 1, triple[0], 0.0000001
+    assertEquals 3, triple[1], 0.0000001
+    assertEquals 4, triple[2], 0.0000001
+  }
+
+
+  @Test
+  void displacingARowOfTwoCreatesThree() {
+    def oldRow = [1, 2]
+    mountain.scaleFunction = { scale -> scale }
+    def newRow = mountain.displaceRow(oldRow)
+
+    assertEquals 3, newRow.size()
+    assertEquals 1, newRow[0], 0.0000001
+    assertEquals 3.5, newRow[1], 0.0000001
+    assertEquals 2, newRow[2], 0.0000001
+  }
+
+  @Ignore
   @Test
   void eastWestRowInsertion() {
     def westernPoint = northWest
@@ -77,6 +120,7 @@ class MountainTests {
     assertNotNull topMiddle
   }
   
+  @Ignore
   @Test
   void northSouthRowInsertion() {
     def northRow = northWest
@@ -127,6 +171,7 @@ class MountainTests {
   }
 
 
+  @Ignore
   @Test
   void arrayConversion() {
     northWest.elevation = 1
@@ -151,6 +196,7 @@ class MountainTests {
   }
   
   
+  @Ignore
   @Test
   void testInterpolation() {
     def firstMountain = createThreeByThreeMountainWith([[1,2,3],[4,5,6],[7,8,9]])
@@ -171,6 +217,7 @@ class MountainTests {
   }
   
   
+  @Ignore
   @Test
   void testDelta() {
     def firstMountain = createThreeByThreeMountainWith([[1,2,3],[4,5,6],[7,8,9]])
