@@ -64,12 +64,36 @@ class Mountain {
             a c b c a
         a d c d b d c d a
 a e d e c e d e b e d e c e d e a
+
+
+
+import com.augusttechgroup.mountain.*
+m = new Mountain()
+m.scaleFunction = { scale -> scale }
+oldRow = [1,2]
+m.displaceRow(oldRow)
+
   */
   def displaceRow(row) {
     def newRow = []
-    for(int n = 0; n < r.size() - 1; n++) {
-      insertNewPoint(row[n..(n+1)])
+    for(int n = 0; n < row.size() - 1; n++) {
+      def pair = row[n..(n+1)]
+      def ns = nextScale(row)
+      def triple = createTripleFromPair(pair, ns)
+      println "pair=${pair}"
+      println "nextScale=${ns}"
+      println "triple=${triple.getClass()}"
+      println "newRole=${newRow.getClass()}"
+      if(newRow) {
+        newRow << triple[1..2]
+      }
+      else {
+        newRow << triple
+      }
+      newRow = newRow.flatten()
     }
+    
+    return newRow
   }
 
 
@@ -78,7 +102,7 @@ a e d e c e d e b e d e c e d e a
    * in the middle displaced from the average of the two according to the
    * prescribed scale.
    */
-  def insertNewPoint(pair, scale) {
+  def createTripleFromPair(pair, scale) {
     [pair[0], midpointElevation(pair, displacement.curry(scale)), pair[1]]
   }
 

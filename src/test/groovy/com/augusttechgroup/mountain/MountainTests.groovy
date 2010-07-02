@@ -73,7 +73,7 @@ class MountainTests {
     def pair = [ 1, 4 ]
 
     mountain.scaleFunction = { scale -> 1 / scale }
-    def triple = mountain.insertNewPoint(pair, mountain.nextScale(pair))
+    def triple = mountain.createTripleFromPair(pair, mountain.nextScale(pair))
     assertEquals 1, triple[0], 0.0000001
     assertEquals 3, triple[1], 0.0000001
     assertEquals 4, triple[2], 0.0000001
@@ -90,6 +90,20 @@ class MountainTests {
     assertEquals 1, newRow[0], 0.0000001
     assertEquals 3.5, newRow[1], 0.0000001
     assertEquals 2, newRow[2], 0.0000001
+  }
+
+  @Test
+  void displacingARowOfThreeCreatesFive() {
+    def oldRow = [1, 3.5, 2]
+    mountain.scaleFunction = { scale -> scale }
+    def newRow = mountain.displaceRow(oldRow)
+
+    assertEquals 5, newRow.size()
+    assertEquals 1, newRow[0], 0.0000001
+    assertEquals 6.25, newRow[1], 0.0000001
+    assertEquals 3.5, newRow[2], 0.0000001
+    assertEquals 6.75, newRow[3], 0.0000001
+    assertEquals 2, newRow[4], 0.0000001
   }
 
   @Ignore
