@@ -70,146 +70,141 @@ class MountainTests {
 
   @Test
   void tripleIsGeneratedFromPairWithDisplacement() {
-    def pair = [ 1, 4 ]
+    def pair = [ 1.0, 4.0 ]
 
     mountain.scaleFunction = { scale -> 1 / scale }
     def triple = mountain.createTripleFromPair(pair, mountain.nextScale(pair))
-    assertEquals 1, triple[0], 0.0000001
-    assertEquals 3, triple[1], 0.0000001
-    assertEquals 4, triple[2], 0.0000001
+    assertEquals([1.0, 3.0, 4.0], triple)
   }
 
 
   @Test
   void displacingARowOfTwoCreatesThree() {
-    def oldRow = [1, 2]
+    def oldRow = [1.0, 2.0]
     mountain.scaleFunction = { scale -> scale }
     def newRow = mountain.displaceRow(oldRow)
 
     assertEquals 3, newRow.size()
-    assertEquals 1, newRow[0], 0.0000001
-    assertEquals 3.5, newRow[1], 0.0000001
-    assertEquals 2, newRow[2], 0.0000001
+    assertEquals([1.0, 3.5, 2.0], newRow)
   }
+
 
   @Test
   void displacingARowOfThreeCreatesFive() {
-    def oldRow = [1, 3.5, 2]
+    def oldRow = [1.0, 3.5, 2.0]
     mountain.scaleFunction = { scale -> scale }
     def newRow = mountain.displaceRow(oldRow)
 
     assertEquals 5, newRow.size()
-    assertEquals 1, newRow[0], 0.0000001
-    assertEquals 6.25, newRow[1], 0.0000001
-    assertEquals 3.5, newRow[2], 0.0000001
-    assertEquals 6.75, newRow[3], 0.0000001
-    assertEquals 2, newRow[4], 0.0000001
+    assertEquals([1.0, 6.25, 3.5, 6.75, 2.0], newRow)
   }
 
-  @Ignore
+
+  @Test(expected=IllegalArgumentException.class)
+  void createARowFailsIfRowsAreDifferentSizes() {
+    mountain.createMiddleRow([ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ])
+  }
+
+
   @Test
-  void eastWestRowInsertion() {
-    def westernPoint = northWest
-    assertNotNull westernPoint
-    assertNotNull westernPoint.east
-    assertNull westernPoint.east.east
+  void testCreatingARowForInsertion() {
+    def topRow = [ 1, 2, 3 ]
+    def bottomRow = [ 4, 5, 6 ]
+    mountain.scaleFunction = { scale -> 0.5 }
+    def middleRow = mountain.createMiddleRow(topRow, bottomRow)
     
-    mountain.doInsertionsOnEastWestRow(northWest, 2, { 1 })
-    def middlePoint = westernPoint.east
-    assertNotNull middlePoint
-    def easternPoint = middlePoint.east
-    assertNotNull easternPoint
-
-    assertEquals 2, middlePoint.scale
-    assertEquals westernPoint, middlePoint.west
-    assertEquals middlePoint, easternPoint.west
-    
-    assertEquals southWest, northWest.south
-    assertEquals southEast, northEast.south
-
-    def bottomMiddle = southWest.east
-    assertNotNull bottomMiddle
-    
-    def topMiddle = northWest.east
-    assertNotNull topMiddle
+    assertEquals 3, middleRow.size()
+    assertEquals([3.0, 4.0, 5.0], middleRow)
   }
-  
-  @Ignore
+
+
+  @Test(expected=IllegalArgumentException.class)
+  void tryingToInsertPastTheEndOfTheRowsFails() {
+    mountain.insertRowAfterIndex(1)
+  }
+
+
+  @Test(expected=IllegalArgumentException.class)
+  void tryingToInsertPastTheEndOfTheRowsFailsOnLargerMountains() {
+    mountain.rows = [
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 2, 2, 2, 2, 2, 2, 2, 2 ],
+      [ 3, 3, 3, 3, 3, 3, 3, 3 ],
+      [ 4, 4, 4, 4, 4, 4, 4, 4 ],
+      [ 5, 5, 5, 5, 5, 5, 5, 5 ]
+    ]
+    mountain.insertRowAfterIndex(4)
+  }
+
+
   @Test
-  void northSouthRowInsertion() {
-    def northRow = northWest
-    def southRow = southWest
+  void testInsertingARowInAMinimalMountain() {
+    mountain.rows = [
+      [ 1.0, 1.0, 1.0 ],
+      [ 2.0, 2.0, 2.0 ]
+    ]
     
-    assertNotNull northRow
-    assertNotNull southRow
-    assertEquals northRow, southRow.north
-    assertEquals southRow, northRow.south
+    assertEquals 2, mountain.size()
     
-    mountain.doInsertionsOnEastWestRow(northRow, 2, { 1 })
-    mountain.doInsertionsOnEastWestRow(southRow, 2, { 1 })
-    def middleRow = mountain.insertBetweenRows(northRow, southRow, 2, { 1 })
-        
-    assertNotNull middleRow
-    
-    def nw = northRow
-    def nm = northRow.east
-    def ne = northRow.east?.east
-    def mw = middleRow
-    def mm = middleRow.east
-    def me = middleRow.east?.east
-    def sw = southRow
-    def sm = southRow.east
-    def se = southRow.east?.east
-    
-    assertNotNull nw
-    assertNotNull nm
-    assertNotNull ne
-    assertNotNull mw
-    assertNotNull mm
-    assertNotNull me
-    assertNotNull sw
-    assertNotNull sm
-    assertNotNull se
-    assertEquals mw, nw.south
-    assertEquals mw, sw.north
-    assertEquals mm, nm.south
-    assertEquals mm, sm.north
-    assertEquals me, ne.south
-    assertEquals me, se.north
-    assertEquals nw, mw.north
-    assertEquals sw, mw.south
-    assertEquals nm, mm.north
-    assertEquals sm, mm.south
-    assertEquals ne, me.north
-    assertEquals se, me.south
+    mountain.scaleFunction = { scale -> 0.1 }
+    println mountain
+    def newRow = mountain.insertRowAfterIndex(0)
+    println mountain
+    assertEquals 3, mountain.size()
+    assertEquals 3, mountain[0].size()
+    assertEquals 3, mountain[1].size()
+    assertEquals 3, mountain[2].size()
+    assertEquals([1.0, 1.0, 1.0], mountain[0])
+    assertEquals([1.6, 1.6, 1.6], mountain[1])
+    assertEquals([2.0, 2.0, 2.0], mountain[2])
+    assertEquals newRow, mountain[1]
   }
 
 
-  @Ignore
   @Test
-  void arrayConversion() {
-    northWest.elevation = 1
-    northEast.elevation = 2
-    southWest.elevation = 3
-    southEast.elevation = 4
-    def array = mountain.toArray()
+  void testInsertingTheSecondRow() {
+    mountain.rows = [
+      [ 1.0, 1.0, 1.0, 1.0, 1.0],
+      [ 2.0, 2.0, 2.0, 2.0, 2.0],
+      [ 3.0, 3.0, 3.0, 3.0, 3.0]
+    ]
     
-    assertEquals 2, array.size()
-    def northRow = array[0]
-    def southRow = array[1]
-    
-    assertNotNull northRow
-    assertNotNull southRow
-    assertEquals 2, northRow.size()
-    assertEquals 2, southRow.size()
-    
-    assertEquals 1, northRow[0], 0.00000001
-    assertEquals 2, northRow[1], 0.00000001
-    assertEquals 3, southRow[0], 0.00000001
-    assertEquals 4, southRow[1], 0.00000001
+    mountain.scaleFunction = { scale -> 0.1 }
+    def newRow = mountain.insertRowAfterIndex(1)
+    assertEquals 4, mountain.size()
+    assertEquals 5, mountain[1].size()
+    assertEquals 5, mountain[2].size()
+    assertEquals 5, mountain[3].size()
+    assertEquals([2.0, 2.0, 2.0, 2.0, 2.0], mountain[1])
+    assertEquals([2.6, 2.6, 2.6, 2.6, 2.6], mountain[2])
+    assertEquals([3.0, 3.0, 3.0, 3.0, 3.0], mountain[3])
+    assertEquals newRow, mountain[2]
   }
-  
-  
+
+
+  @Test
+  void testInsertingARowInTheMiddleOfAMountain() {
+    mountain.rows = [
+      [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 ],
+      [ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 ],
+      [ 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0 ],
+      [ 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0 ],
+      [ 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0 ]
+    ]
+    
+    mountain.scaleFunction = { scale -> -0.1 }
+    def newRow = mountain.insertRowAfterIndex(3)
+    assertEquals 6, mountain.size()
+    assertEquals 9, mountain[4].size()
+    assertEquals([4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0], mountain[3])
+    assertEquals([4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 4.4], mountain[4])
+    assertEquals([5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0], mountain[5])
+    assertEquals 9, newRow.size()
+    assertEquals newRow, mountain[4]
+  }
+
+
+
   @Ignore
   @Test
   void testInterpolation() {

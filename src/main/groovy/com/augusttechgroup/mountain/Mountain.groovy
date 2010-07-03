@@ -77,13 +77,7 @@ m.displaceRow(oldRow)
   def displaceRow(row) {
     def newRow = []
     for(int n = 0; n < row.size() - 1; n++) {
-      def pair = row[n..(n+1)]
-      def ns = nextScale(row)
-      def triple = createTripleFromPair(pair, ns)
-      println "pair=${pair}"
-      println "nextScale=${ns}"
-      println "triple=${triple.getClass()}"
-      println "newRole=${newRow.getClass()}"
+      def triple = createTripleFromPair(row[n..(n+1)], nextScale(row))
       if(newRow) {
         newRow << triple[1..2]
       }
@@ -94,6 +88,36 @@ m.displaceRow(oldRow)
     }
     
     return newRow
+  }
+  
+  
+  /**
+   * Inserts a newly created middle row in rows at the index immediately following
+   * the given index.
+   */
+  def insertRowAfterIndex(index) {
+    if(index >= (rows.size() - 1)) {
+      throw new IllegalArgumentException("Cannot insert rows past index ${rows.size() - 1}")
+    }
+    rows = rows[0..index] + [createMiddleRow(rows[index], rows[index + 1])] + rows[(index + 1)..-1]
+
+    return rows[index + 1]
+  }
+
+
+  def createMiddleRow(topRow, bottomRow) {
+    if(topRow?.size() != bottomRow?.size()) {
+      throw new IllegalArgumentException("Rows are not of the same size (${topRow?.size()} vs ${bottomRow?.size()})")
+    }
+    
+    def scale = nextScale(topRow)
+    def middleRow = []
+    topRow.eachWithIndex { topPoint, index ->
+      def bottomPoint = bottomRow[index]
+      middleRow << midpointElevation([topPoint, bottomPoint], displacement.curry(scale))
+    }
+    
+    return middleRow
   }
 
 
@@ -270,6 +294,11 @@ m.displaceRow(oldRow)
     }
     
     return firstMiddlePoint
+  }
+  
+  
+  String toString() {
+    rows.toString()
   }
 }
 

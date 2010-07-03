@@ -3,3 +3,6 @@ data.txt
 mountain.txt
 data/
 *.zip
+nbproject/
+manifest.mf
+build.xml
