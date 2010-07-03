@@ -59,20 +59,11 @@ class Mountain {
   
   
   /*
-               a a
-              a b a
-            a c b c a
-        a d c d b d c d a
-a e d e c e d e b e d e c e d e a
-
-
-
 import com.augusttechgroup.mountain.*
 m = new Mountain()
 m.scaleFunction = { scale -> scale }
 oldRow = [1,2]
 m.displaceRow(oldRow)
-
   */
   def displaceRow(row) {
     def newRow = []
@@ -137,17 +128,12 @@ m.displaceRow(oldRow)
 
 
   def grow() {
-    scale++
-
-    northWest.eachSouth { point -> 
-      doInsertionsOnEastWestRow(point, scale, scaleFunction.curry(scale))
+    rows.eachWithIndex { row, index ->
+      rows[index] = displaceRow(row)
     }
     
-    northWest.eachSouth { point ->
-      def southernPoint = point.south
-      if(southernPoint) {
-        insertBetweenRows(point, southernPoint, scale, scaleFunction.curry(scale))
-      }
+    rows[0..-2].eachWithIndex { row, index -> 
+      insertRowAfterIndex(index)
     }
   }
 

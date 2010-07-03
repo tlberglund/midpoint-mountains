@@ -147,9 +147,7 @@ class MountainTests {
     assertEquals 2, mountain.size()
     
     mountain.scaleFunction = { scale -> 0.1 }
-    println mountain
     def newRow = mountain.insertRowAfterIndex(0)
-    println mountain
     assertEquals 3, mountain.size()
     assertEquals 3, mountain[0].size()
     assertEquals 3, mountain[1].size()
@@ -203,6 +201,38 @@ class MountainTests {
     assertEquals newRow, mountain[4]
   }
 
+
+  @Test
+  void growingADefaultMountain() {
+    assertEquals 2, mountain.size()
+    assertEquals([2, 2], [mountain[0].size(), mountain[1].size()])
+    
+    mountain.grow()
+    assertEquals 3, mountain.size()
+    assertEquals 3, mountain[0].size()
+    assertEquals 3, mountain[1].size()
+    assertEquals 3, mountain[2].size()
+
+    mountain.grow()
+    assertEquals 5, mountain.size()
+    assertEquals 5, mountain[0].size()
+    assertEquals 5, mountain[1].size()
+    assertEquals 5, mountain[2].size()
+    assertEquals 5, mountain[3].size()
+    assertEquals 5, mountain[4].size()
+
+    mountain.grow()
+    assertEquals 9, mountain.size()
+    assertEquals 9, mountain[0].size()
+    assertEquals 9, mountain[1].size()
+    assertEquals 9, mountain[2].size()
+    assertEquals 9, mountain[3].size()
+    assertEquals 9, mountain[4].size()
+    assertEquals 9, mountain[5].size()
+    assertEquals 9, mountain[6].size()
+    assertEquals 9, mountain[7].size()
+    assertEquals 9, mountain[8].size()
+  }
 
 
   @Ignore
