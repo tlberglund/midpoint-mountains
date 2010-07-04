@@ -5,12 +5,13 @@
 // http://augusttechgroup.com
 //
 
-package com.augusttechgroup.mountain
+import com.augusttechgroup.mountain.Mountain
 
-def scale = 4
+def scale = 7
 
 m = new Mountain()
-m.initialize()
-scale.times { m.grow() }
+scale.times { s ->
+  m.grow()
+}
 
 m.export()

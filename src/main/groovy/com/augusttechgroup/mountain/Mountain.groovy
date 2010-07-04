@@ -21,10 +21,10 @@ class Mountain {
     random = new Random()
     random.setSeed(new Date().time)
     rows = [ [0,0], [0,0] ]
-    rows[0][0] = displacement(nextScale(rows[0]))
-    rows[0][1] = displacement(nextScale(rows[0]))
-    rows[1][0] = displacement(nextScale(rows[1]))
-    rows[1][1] = displacement(nextScale(rows[1]))
+    rows[0][0] = displacement(currentScale(rows[0]))
+    rows[0][1] = displacement(currentScale(rows[0]))
+    rows[1][0] = displacement(currentScale(rows[1]))
+    rows[1][1] = displacement(currentScale(rows[1]))
   }
 
 
@@ -54,17 +54,10 @@ class Mountain {
 
 
   def scaleFunction = { scale ->
-    random.nextGaussian() / (double)scale
+    random.nextGaussian() / scale
   }
   
   
-  /*
-import com.augusttechgroup.mountain.*
-m = new Mountain()
-m.scaleFunction = { scale -> scale }
-oldRow = [1,2]
-m.displaceRow(oldRow)
-  */
   def displaceRow(row) {
     def newRow = []
     for(int n = 0; n < row.size() - 1; n++) {
@@ -101,7 +94,7 @@ m.displaceRow(oldRow)
       throw new IllegalArgumentException("Rows are not of the same size (${topRow?.size()} vs ${bottomRow?.size()})")
     }
     
-    def scale = nextScale(topRow)
+    def scale = currentScale(topRow)
     def middleRow = []
     topRow.eachWithIndex { topPoint, index ->
       def bottomPoint = bottomRow[index]
@@ -131,15 +124,20 @@ m.displaceRow(oldRow)
     rows.eachWithIndex { row, index ->
       rows[index] = displaceRow(row)
     }
-    
+
+    def newRows = []
     rows[0..-2].eachWithIndex { row, index -> 
-      insertRowAfterIndex(index)
+      newRows << rows[index]
+      newRows << createMiddleRow(rows[index], rows[index + 1])
     }
+    newRows << rows[-1]
+
+    rows = newRows
   }
 
 
   def export(pw = System.out) {
-    toArray().each { row -> 
+    rows.each { row -> 
       pw.println row.join('\t')
     }
   }

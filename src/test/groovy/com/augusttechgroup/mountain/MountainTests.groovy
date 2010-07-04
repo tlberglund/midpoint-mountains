@@ -204,14 +204,20 @@ class MountainTests {
 
   @Test
   void growingADefaultMountain() {
+    mountain.rows = [ [1.0, 1.0], [2.0, 2.0] ]
+    mountain.scaleFunction = { scale -> 1.0 / scale }
     assertEquals 2, mountain.size()
-    assertEquals([2, 2], [mountain[0].size(), mountain[1].size()])
+    assertEquals 2, mountain[0].size()
+    assertEquals 2, mountain[1].size()
     
     mountain.grow()
     assertEquals 3, mountain.size()
     assertEquals 3, mountain[0].size()
     assertEquals 3, mountain[1].size()
     assertEquals 3, mountain[2].size()
+    assertEquals([1.0, 1.5, 1.0], mountain[0])
+    assertEquals([2.0, 2.5, 2.0], mountain[1])
+    assertEquals([2.0, 2.5, 2.0], mountain[2])
 
     mountain.grow()
     assertEquals 5, mountain.size()
@@ -220,6 +226,11 @@ class MountainTests {
     assertEquals 5, mountain[2].size()
     assertEquals 5, mountain[3].size()
     assertEquals 5, mountain[4].size()
+    assertEquals([1.0,  1.50, 1.5,  1.50, 1.0], mountain[0])
+    assertEquals([1.75, 2.25, 2.25, 2.25, 1.75], mountain[1])
+    assertEquals([2.0,  2.50, 2.5,  2.50, 2.0], mountain[2])
+    assertEquals([2.25, 2.75, 2.75, 2.75, 2.25], mountain[3])
+    assertEquals([2.0,  2.50, 2.5,  2.50, 2.0], mountain[4])
 
     mountain.grow()
     assertEquals 9, mountain.size()
@@ -232,6 +243,7 @@ class MountainTests {
     assertEquals 9, mountain[6].size()
     assertEquals 9, mountain[7].size()
     assertEquals 9, mountain[8].size()
+    mountain.export()
   }
 
 
