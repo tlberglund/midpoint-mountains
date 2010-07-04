@@ -75,20 +75,6 @@ class Mountain {
   }
   
   
-  /**
-   * Inserts a newly created middle row in rows at the index immediately following
-   * the given index.
-   */
-  def insertRowAfterIndex(index) {
-    if(index >= (rows.size() - 1)) {
-      throw new IllegalArgumentException("Cannot insert rows past index ${rows.size() - 1}")
-    }
-    rows = rows[0..index] + [createMiddleRow(rows[index], rows[index + 1])] + rows[(index + 1)..-1]
-
-    return rows[index + 1]
-  }
-
-
   def createMiddleRow(topRow, bottomRow) {
     if(topRow?.size() != bottomRow?.size()) {
       throw new IllegalArgumentException("Rows are not of the same size (${topRow?.size()} vs ${bottomRow?.size()})")
@@ -144,65 +130,39 @@ class Mountain {
 
 
   def tweens(toMountain, tweenCount) {
-    def toElevations = toMountain.toArray()
-    def fromElevations = toArray()
-    def deltaElevations = delta(toElevations)
+    def deltaElevations = delta(toMountain)
     def mountains = []
     tweenCount.times { tween ->
-      def rows = []
-      fromElevations.eachWithIndex { fromRow, fromRowNumber ->
-        def row = []
+      def tweenRows = []
+      rows.eachWithIndex { fromRow, fromRowNumber ->
+        def tweenRow = []
         fromRow.eachWithIndex { fromCol, fromColNumber ->
-          row << fromCol + (deltaElevations[fromRowNumber][fromColNumber] * ((double)tween / tweenCount))
+          tweenRow << fromCol + (deltaElevations[fromRowNumber][fromColNumber] * ((double)tween / tweenCount))
         }
-        rows << row
+        tweenRows << tweenRow
       }
-      mountains << rows
+      mountains << tweenRows
     }
     
     return mountains
   }
 
 
-  def interpolate(Mountain toMountain) {
-    interpolate(toMountain.toArray())
-  }
-
-
-  def delta(toMountainArray) {
-    def fromRows = toArray()
-    def toRows = toMountainArray
-    def rows = []
-    fromRows.eachWithIndex { fromRow, fromRowNumber ->
-      def row = []
+  def delta(toMountain) {
+    def deltaRows = []
+    rows.eachWithIndex { fromRow, fromRowNumber ->
+      def deltaRow = []
       fromRow.eachWithIndex { fromCol, fromColNumber ->
-        def toCol = toRows[fromRowNumber][fromColNumber]
-        row << toCol - fromCol
+        def toCol = toMountain[fromRowNumber][fromColNumber]
+        deltaRow << toCol - fromCol
       }
-      rows << row
+      deltaRows << deltaRow
     }
     
-    return rows
+    return deltaRows
   }
 
 
-  def interpolate(toMountainArray, step = 2) {
-    def fromRows = toArray()
-    def toRows = toMountainArray
-    def rows = []
-    fromRows.eachWithIndex { fromRow, fromRowNumber ->
-      def row = []
-      fromRow.eachWithIndex { fromCol, fromColNumber ->
-        def toCol = toRows[fromRowNumber][fromColNumber]
-        row << ((toCol - fromCol) / step) + fromCol
-      }
-      rows << row
-    }
-    
-    return rows
-  }
-
-  
   String toString() {
     rows.toString()
   }

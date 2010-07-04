@@ -7,22 +7,18 @@
 
 package com.augusttechgroup.mountain
 
-def scale = 9
+def scale = 7
 
 m1 = new Mountain()
-m1.initialize()
 scale.times { m1.grow() }
 
 m2 = new Mountain()
-m2.initialize()
 scale.times { m2.grow() }
 
 m3 = new Mountain()
-m3.initialize()
 scale.times { m3.grow() }
 
 m4 = new Mountain()
-m4.initialize()
 scale.times { m4.grow() }
 
 m12Tweens = m1.tweens(m2, 20)
