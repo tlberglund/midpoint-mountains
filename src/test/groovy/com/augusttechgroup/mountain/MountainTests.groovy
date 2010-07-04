@@ -159,7 +159,6 @@ class MountainTests {
     assertEquals 9, mountain[6].size()
     assertEquals 9, mountain[7].size()
     assertEquals 9, mountain[8].size()
-    mountain.export()
   }
 
 }

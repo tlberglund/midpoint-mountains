@@ -20,11 +20,10 @@ class Mountain {
   Mountain() {
     random = new Random()
     random.setSeed(new Date().time)
-    rows = [ [0,0], [0,0] ]
-    rows[0][0] = displacement(currentScale(rows[0]))
-    rows[0][1] = displacement(currentScale(rows[0]))
-    rows[1][0] = displacement(currentScale(rows[1]))
-    rows[1][1] = displacement(currentScale(rows[1]))
+    rows = [
+      [displacement(1), displacement(1)],
+      [displacement(1), displacement(1)]
+    ]
   }
 
 
