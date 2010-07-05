@@ -7,7 +7,7 @@
 
 import com.augusttechgroup.mountain.Mountain
 
-def scale = 7
+def scale = 2
 
 m = new Mountain()
 scale.times { s ->
