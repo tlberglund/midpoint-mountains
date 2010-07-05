@@ -7,11 +7,9 @@
 // Gradle build file
 //
 
-//usePlugin 'java'
 usePlugin 'groovy'
 
 defaultTasks 'build'
-
 
 repositories {
     mavenCentral()
